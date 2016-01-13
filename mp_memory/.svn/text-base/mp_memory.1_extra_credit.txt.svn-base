@@ -1,0 +1,207 @@
+Grading revision r1019 by geigle1, dated 2015-06-22 19:00:52.000924016 -0500 CDT
+Monad Autograder
+Testing mp_memory.1 at 2015-06-25 23:32:17
+
+"All that is gold does not glitter, / Not all those who wander are lost;" ~ Bilbo Baggins
+
+Setting up test environment...
+Compiling...
+================================================================
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:58:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:26:21: note: in instantiation of member function 'cs225::scoped_ptr<int>::empty' requested here
+    ASSERT(emptyptr.empty());
+                    ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:70:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:38:12: note: in instantiation of member function 'cs225::scoped_ptr<int>::operator*' requested here
+    ASSERT(*ptr1 == 1);
+           ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:94:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:49:16: note: in instantiation of member function 'cs225::scoped_ptr<int>::get' requested here
+    ASSERT(ptr.get() == nullptr);
+               ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:64:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:68:12: note: in instantiation of member function 'cs225::scoped_ptr<int>::operator*' requested here
+    ASSERT(*ptr == 2);
+           ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:34:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:118:10: note: in instantiation of member function 'cs225::scoped_ptr<int>::operator=' requested here
+    ptr2 = std::move(ptr);
+         ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:88:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:172:23: note: in instantiation of member function 'cs225::scoped_ptr<int>::get' requested here
+    ASSERT(num == ptr.get());
+                      ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:82:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:180:15: note: in instantiation of member function 'cs225::scoped_ptr<std::__1::pair<int, int> >::operator->' requested here
+    ASSERT(ptr->first == 4);
+              ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:76:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:191:15: note: in instantiation of member function 'cs225::scoped_ptr<std::__1::pair<int, int> >::operator->' requested here
+    ASSERT(ptr->first == 4);
+              ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+8 warnings generated.
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:58:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:26:21: note: in instantiation of member function 'cs225::scoped_ptr<int>::empty' requested here
+    ASSERT(emptyptr.empty());
+                    ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:70:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:38:12: note: in instantiation of member function 'cs225::scoped_ptr<int>::operator*' requested here
+    ASSERT(*ptr1 == 1);
+           ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:94:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:49:16: note: in instantiation of member function 'cs225::scoped_ptr<int>::get' requested here
+    ASSERT(ptr.get() == nullptr);
+               ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:64:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:68:12: note: in instantiation of member function 'cs225::scoped_ptr<int>::operator*' requested here
+    ASSERT(*ptr == 2);
+           ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:34:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:118:10: note: in instantiation of member function 'cs225::scoped_ptr<int>::operator=' requested here
+    ptr2 = std::move(ptr);
+         ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:88:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:172:23: note: in instantiation of member function 'cs225::scoped_ptr<int>::get' requested here
+    ASSERT(num == ptr.get());
+                      ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:82:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:180:15: note: in instantiation of member function 'cs225::scoped_ptr<std::__1::pair<int, int> >::operator->' requested here
+    ASSERT(ptr->first == 4);
+              ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+In file included from unit_tests.cpp:19:
+In file included from include/scoped_ptr.h:166:
+include/scoped_ptr.tcc:76:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+unit_tests.cpp:191:15: note: in instantiation of member function 'cs225::scoped_ptr<std::__1::pair<int, int> >::operator->' requested here
+    ASSERT(ptr->first == 4);
+              ^
+./proxy.h:297:9: note: expanded from macro 'ASSERT'
+                if (!(expr))                               \
+                      ^
+8 warnings generated.
+
+
+Running tests...
+================================================================
+ptr_empty (asan) . . . . . . [5 pts]  - FAILED
+ptr_full (asan)  . . . . . . [5 pts]  - FAILED
+ptr_clear (asan) . . . . . . [5 pts]  - FAILED
+ptr_deref_assign . . . . . . [5 pts]  - FAILED
+ptr_const_deref_signature  . [5 pts]  - FAILED
+ptr_no_copy_construction . . [5 pts]  - FAILED
+ptr_no_copy_assignment . . . [5 pts]  - FAILED
+ptr_move_construction (asan) [10 pts] - FAILED
+ptr_move_assignment (asan) . [10 pts] - FAILED
+ptr_get (asan) . . . . . . . [5 pts]  - FAILED
+ptr_no_copies (asan) . . . . [15 pts] - FAILED
+ptr_const_deref  . . . . . . [5 pts]  - FAILED
+ptr_const_get  . . . . . . . [5 pts]  - FAILED
+ptr_member_access  . . . . . [5 pts]  - FAILED
+ptr_const_member_access  . . [5 pts]  - FAILED
+ptr_swap (asan)  . . . . . . [5 pts]  - FAILED
+
+
+Total score...
+================================================================
+TOTAL SCORE: 0
+

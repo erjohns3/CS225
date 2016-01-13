@@ -1,0 +1,557 @@
+/**
+ * @file maze.cpp
+ * Definition of a maze class.
+ *
+ * @author Chase Geigle
+ * @date Summer 2014
+ */
+
+#include <random>
+
+#include "tools.h"
+#include "maze.h"
+
+namespace cs225
+{
+
+using namespace tools;
+
+std::ostream& operator<<(std::ostream& os, direction dir)
+{
+    switch (dir)
+    {
+        case direction::RIGHT:
+            return os << "RIGHT";
+        case direction::DOWN:
+            return os << "DOWN";
+        case direction::LEFT:
+            return os << "LEFT";
+        case direction::UP:
+            return os << "UP";
+    }
+}
+
+/*
+maze::maze(uint64_t width, uint64_t height) : width_{width}, height_{height}
+{
+    std::random_device rd;
+    std::mt19937_64 rng{rd()};
+    // use rng for your random numbers: it's a functor that returns you
+    // random numbers
+
+    /// @todo your code here
+
+    for(int i=0; i<width_*height_; i++)
+        vertices.push_back(graph_.add_vertex());
+
+    dsets sets;
+    sets.add_elements(width_*height_);
+    uint64_t count = 0;
+
+    while(count < width_*height_){
+        uint64_t vertexA = rng()%(width_*height_);
+        bool edge = rng()%2 == 1;
+        uint64_t vertexB = vertexA;
+
+        if(edge){
+            if(vertexA%width_ == width_-1)
+                continue;
+            vertexB++;
+        }else{
+            if(vertexA/width_ == height-1)
+                continue;
+            vertexB+=width;
+        }
+
+        if(graph_.has_edge(vertices[vertexA], vertices[vertexB]))
+            continue;
+
+        if(sets.find(vertexA) != sets.find(vertexB)){
+            graph_.add_edge(vertices[vertexA], vertices[vertexB]);
+            sets.merge(vertexA, vertexB);
+            count++;
+        }
+    }
+}
+*/
+
+
+maze::maze(uint64_t width, uint64_t height) : width_{width}, height_{height}
+{
+    std::random_device rd;
+    std::mt19937_64 rng{rd()};
+    // use rng for your random numbers: it's a functor that returns you
+    // random numbers
+
+    /// @todo your code here
+
+    for(uint64_t i=0; i<width_*height_; i++)
+        vertices.push_back(graph_.add_vertex());
+
+    for(uint64_t i=0; i<width_*height_; i++){
+        if(i%width_ < width_-1){
+            graph_.add_edge(vertices[i], vertices[i+1]);
+            graph_.edge_weight(vertices[i], vertices[i+1], rng());
+            graph_.edge_label(vertices[i], vertices[i+1], tools::edge_state::UNEXPLORED);
+
+        }
+        if(i/width_ < height_-1){
+            graph_.add_edge(vertices[i], vertices[i+width_]);
+            graph_.edge_weight(vertices[i], vertices[i+width_], rng());
+            graph_.edge_label(vertices[i], vertices[i+width_], tools::edge_state::UNEXPLORED);
+        }
+    }
+
+    tools::mark_mst(graph_);
+
+    for (const auto& e : graph_.edges())
+        if(graph_.edge_label(e) != tools::edge_state::MST)
+            graph_.remove_edge(e);
+
+    for (const auto& e : graph_.edges())
+        graph_.edge_label(e, tools::edge_state::UNEXPLORED);
+}
+
+/*
+maze::maze(uint64_t width, uint64_t height) : width_{width}, height_{height}
+{
+    std::mt19937_64 rng{rd()};
+
+    for(int i=0; i<width_*height_; i++)
+        vertices.push_back(graph_.add_vertex());
+
+    for(const auto& v : graph_.vertices())
+        vtx_mark[v] = vertex_state::UNEXPLORED;
+
+    traverse(rng()%(width_*height_));
+}
+*/
+
+void maze::traverse(uint64_t vtxA)
+{
+    std::mt19937_64 rng{rd()};
+
+    vtx_mark[vertices[vtxA]] = vertex_state::VISITED;
+
+    uint64_t vtxB;
+    uint64_t dir;
+
+    uint64_t x = vtxA%width_;
+    uint64_t y = vtxA/width_;
+
+    bool up = false;
+    bool down = false;
+    bool left = false;
+    bool right = false;
+
+    if(y == 0 || vtx_mark[vertices[vtxA-width_]] == vertex_state::VISITED)
+        up = true;
+    if(x == width_-1 || vtx_mark[vertices[vtxA+1]] == vertex_state::VISITED)
+        right = true;
+    if(y == height_-1 || vtx_mark[vertices[vtxA+width_]] == vertex_state::VISITED)
+        down = true;
+    if(x == 0 || vtx_mark[vertices[vtxA-1]] == vertex_state::VISITED)
+        left = true;
+
+    while(!(up && down && left && right)){
+        dir = rng()%4;
+        if(dir == 0 && !up){
+            vtxB = vtxA - width_;
+            if(y > 0 && vtx_mark[vertices[vtxB]] == vertex_state::UNEXPLORED){
+                graph_.add_edge(vertices[vtxA], vertices[vtxB]);
+                traverse(vtxB);
+            }
+            up = true;
+        }else if(dir == 1 && !right){
+            vtxB = vtxA + 1;
+            if(x < width_-1 && vtx_mark[vertices[vtxB]] == vertex_state::UNEXPLORED){
+                graph_.add_edge(vertices[vtxA], vertices[vtxB]);
+                traverse(vtxB);
+            }
+            right = true;
+        }else if(dir == 2 && !down){
+            vtxB = vtxA + width_;
+            if(y < height_-1 && vtx_mark[vertices[vtxB]] == vertex_state::UNEXPLORED){
+                graph_.add_edge(vertices[vtxA], vertices[vtxB]);
+                traverse(vtxB);
+            }
+            down = true;
+        }else if(dir == 3 && !left){
+            vtxB = vtxA - 1;
+            if(x > 0 && vtx_mark[vertices[vtxB]] == vertex_state::UNEXPLORED){
+                graph_.add_edge(vertices[vtxA], vertices[vtxB]);
+                traverse(vtxB);
+            }
+            left = true;
+        }
+    }
+}
+
+/*
+void maze::traverse(uint64_t vtxA)
+{
+    std::mt19937_64 rng{rd()};
+
+    vtx_mark[vertices[vtxA]] = vertex_state::VISITED;
+
+    while(!isDone(vtxA)){
+        uint64_t dir = rng()%4;
+        if(dir == 0 && vtxA/width_ > 0 && vtx_mark[vertices[vtxA-width_]] == vertex_state::UNEXPLORED){
+            graph_.add_edge(vertices[vtxA], vertices[vtxA-width_]);
+            traverse(vtxA-width_);
+        }else if(dir == 1 && vtxA%width_ < width_-1 && vtx_mark[vertices[vtxA+1]] == vertex_state::UNEXPLORED){
+            graph_.add_edge(vertices[vtxA], vertices[vtxA+1]);
+            traverse(vtxA+1);
+        }else if(dir == 2 && vtxA/width_ < height_-1 && vtx_mark[vertices[vtxA+width_]] == vertex_state::UNEXPLORED){
+            graph_.add_edge(vertices[vtxA], vertices[vtxA+width_]);
+            traverse(vtxA+width_);
+        }else if(dir == 3 && vtxA%width_ > 0 && vtx_mark[vertices[vtxA-1]] == vertex_state::UNEXPLORED){
+            graph_.add_edge(vertices[vtxA], vertices[vtxA-1]);
+            traverse(vtxA-1);
+        }
+    }
+}
+*/
+
+bool maze::isDone(uint64_t vtxA)
+{
+    bool up = false;
+    bool down = false;
+    bool left = false;
+    bool right = false;
+
+    if(vtxA/width_ == 0 || vtx_mark[vertices[vtxA-width_]] == vertex_state::VISITED)
+        up = true;
+    if(vtxA%width_ == width_-1 || vtx_mark[vertices[vtxA+1]] == vertex_state::VISITED)
+        right = true;
+    if(vtxA/width_ == height_-1 || vtx_mark[vertices[vtxA+width_]] == vertex_state::VISITED)
+        down = true;
+    if(vtxA%width_ == 0 || vtx_mark[vertices[vtxA-1]] == vertex_state::VISITED)
+        left = true;
+
+    return up && down && left && right;
+}
+
+bool maze::can_travel(uint64_t x, uint64_t y, direction dir) const
+{
+    /// @todo your code here
+
+    if(dir == direction::UP && y > 0 && graph_.has_edge(vertices[y*width_ + x], vertices[(y-1)*width_ + x]))
+        return true;
+    else if(dir == direction::RIGHT && x < width_-1 && graph_.has_edge(vertices[y*width_ + x], vertices[y*width_ + x+1]))
+        return true;
+    else if(dir == direction::DOWN && y < height_-1 && graph_.has_edge(vertices[y*width_ + x], vertices[(y+1)*width_ + x]))
+        return true;
+    else if(dir == direction::LEFT && x > 0 && graph_.has_edge(vertices[y*width_ + x], vertices[y*width_ + x-1]))
+        return true;
+    return false;
+
+}
+
+void maze::set_wall(uint64_t x, uint64_t y, direction dir, bool exists)
+{
+    /// @todo your code here
+    /// DON'T THROW EXCEPTIONS FROM THIS FUNCTION
+
+    if (!exists) // if false, remove the wall (aka add edge)
+    {
+        if (dir == direction::DOWN)
+            graph_.add_edge(vertices[y*width_ + x], vertices[y*width_ + x + width_]);
+        else
+            graph_.add_edge(vertices[y*width_ + x], vertices[y*width_ + x + 1]);
+    }
+    else // if true, add the wall (aka remove edge)
+    {
+        if (dir == direction::DOWN) 
+            graph_.remove_edge(vertices[y*width_ + x], vertices[y*width_ + x + width_]);
+        else 
+            graph_.remove_edge(vertices[y*width_ + x], vertices[y*width_ + x + 1]);
+    }
+
+/*
+    uint64_t vtxA = x+y*width_;
+    uint64_t vtxB;
+
+    if(dir == direction::RIGHT)
+        vtxB = vtxA + 1;
+    else if(dir == direction::DOWN)
+        vtxB = vtxA + width_;
+    if(!exists && !graph_.has_edge(vertices[vtxA], vertices[vtxB]))
+        graph_.add_edge(vertices[vtxA], vertices[vtxB]);
+    else if(exists && graph_.has_edge(vertices[vtxA], vertices[vtxB]))
+        graph_.remove_edge(vertices[vtxA], vertices[vtxB]);
+
+*/
+}
+/*
+std::vector<direction> maze::solve()
+{
+    /// @todo your code here
+    //vertices.clear();
+
+    for(const auto& v : graph_.vertices()){
+        //vertices.push_back(v);
+        vtx_mark[v] = vertex_state::UNEXPLORED;
+    }
+
+    depths.resize(width_);
+    parent.resize(width_*height_);
+
+    make_paths(0, 0, 0);
+
+    uint64_t depth = 0;
+    uint64_t end = 0;
+
+    for(uint64_t i=0; i<width_; i++){
+        if(depths[i] > depth){
+            depth = depths[i];
+            end = i;
+        }
+    }
+
+    end += width_*(height_-1);
+    
+    std::vector<direction> dirs;
+
+    dirs.resize(depth);
+
+    for(uint64_t i=depth; i>0; i--){
+        if(parent[end] < end-1)
+            dirs[i] == direction::DOWN;
+        else if(parent[end] == end+1)
+            dirs[i] == direction::LEFT;
+        else if(parent[end] > end+1)
+            dirs[i] == direction::UP;
+        else if(parent[end] == end-1)
+            dirs[i] == direction::RIGHT;
+        end = parent[end];
+    }
+
+    return dirs;
+}
+
+void maze::make_paths(uint64_t x, uint64_t y, uint64_t depth)
+{
+    vtx_mark[vertices[y*width_ + x]] = vertex_state::VISITED;
+
+    if(y == height_-1)
+        depths[x] = depth;
+
+    if(vtx_mark[vertices[(y-1)*width_ + x]] == vertex_state::UNEXPLORED && can_travel(x, y, direction::UP)){
+        parent[(y-1)*width_ + x] = y*width_ + x;
+        make_paths(x, y-1, depth+1);
+    }
+    if(vtx_mark[vertices[y*width_ + x+1]] == vertex_state::UNEXPLORED && can_travel(x, y, direction::RIGHT)){
+        parent[y*width_ + x+1] = y*width_ + x;
+        make_paths(x+1, y, depth+1);
+    }
+    if(vtx_mark[vertices[(y+1)*width_ + x]] == vertex_state::UNEXPLORED && can_travel(x, y, direction::DOWN)){
+        parent[(y+1)*width_ + x] = y*width_ + x;
+        make_paths(x, y+1, depth+1);
+    }
+    if(vtx_mark[vertices[y*width_ + x-1]] == vertex_state::UNEXPLORED && can_travel(x, y, direction::LEFT)){
+        parent[y*width_ + x-1] = y*width_ + x;
+        make_paths(x-1, y, depth+1);
+    }
+}
+
+*/
+
+epng::png maze::draw() const
+{
+    /// @todo your code here
+    epng::png maze_png {width_*10+1, height_*10+1};
+
+    for(uint64_t i=0; i<maze_png.width(); i++)
+        if(!(i>0 && i<10))
+            *maze_png(i,0) = epng::rgba_pixel(0, 0, 0);
+
+    for(uint64_t i=0; i<maze_png.height(); i++)
+        *maze_png(0, i) = epng::rgba_pixel(0, 0, 0);
+
+    for(uint64_t i=0; i<width_*height_; i++){
+        uint64_t x = i%width_;
+        uint64_t y = i/width_;
+        if(x == width_-1 || !graph_.has_edge(vertices[i], vertices[i + 1]))
+            for(uint64_t k=0; k<=10; k++)
+                *maze_png((x+1) * 10, y*10 + k) = epng::rgba_pixel(0, 0, 0);
+        if(y == height_-1 || !graph_.has_edge(vertices[i], vertices[i + width_]))
+            for(uint64_t k=0; k<=10; k++)
+                *maze_png(x*10 + k, (y+1) * 10) = epng::rgba_pixel(0, 0, 0);
+    }
+    return maze_png;
+}
+
+
+std::vector<direction> maze::solve()
+{
+// ------------------------------determine the exit for the maze-----------------------------------------
+    // initialize everything to UNEXPLORED
+    vertex_map<tools::vertex_state> vtx_mark;
+    for (const auto& v : graph_.vertices())
+        vtx_mark[v] = tools::vertex_state::UNEXPLORED;
+    // ---------create a vertex map-------------------
+    vertex_map<vertex> parent_mark;
+    std::queue<vertex> q;
+    q.push(vertices[0]);
+    while (!q.empty())
+    {
+        vertex u = q.front();
+        q.pop();
+        for (const auto& v : graph_.adjacent(u)) {
+            if (vtx_mark[v] == tools::vertex_state::UNEXPLORED) {
+                vtx_mark[v] = tools::vertex_state::VISITED;
+                parent_mark[v] = u; // make the children the key, parent the value 
+                q.push(v);
+            }
+        }
+    }
+                                                                    //std::cout << __LINE__ <<std::endl;
+    uint64_t max = 0;
+    uint64_t max_idx;
+    // loop through the bottommost row--------------------------------------
+    for (uint64_t i = width_*(height_ - 1) ; i < width_*height_ ; ++i )
+    {
+        uint64_t curr_max = 0;
+        // find the path to the start-------------------------------
+        vertex u = vertices[i];
+        while (u != vertices[0]) {
+            vertex v = parent_mark[u];
+            curr_max++;
+            u = v;
+        }
+        // check to see if curr_max is greater than max-----------
+        if (curr_max > max) { 
+            max = curr_max; // replace the old min with the new one
+            max_idx = i; // store the min idx
+        }
+    }
+    // initialize everything to UNEXPLORED------------
+    for (const auto& v : graph_.vertices())
+        vtx_mark[v] = tools::vertex_state::UNEXPLORED;
+    for (const auto& e : graph_.edges())
+        graph_.edge_label(e, tools::edge_state::UNEXPLORED);
+    // find the path to the start from the exit-------------------------------
+    vertex u = vertices[max_idx];
+    while (u != vertices[0]) {
+        vertex v = parent_mark[u];
+        graph_.edge_label(u, v, tools::edge_state::MINPATH);
+        u = v;
+    }
+// ------------------------------------------make the vector--------------------------------------------    
+    std::vector<direction> vect;
+    uint64_t idx = 0;
+    while (idx != max_idx)
+    {
+        if (can_travel(idx%width_, idx/width_, direction::RIGHT)) {
+            if (graph_.edge_label(vertices[idx], vertices[idx + 1]) == tools::edge_state::MINPATH) {
+                if (vtx_mark[vertices[idx + 1]] == tools::vertex_state::UNEXPLORED) {
+                    vect.push_back(direction::RIGHT);
+                    vtx_mark[vertices[idx]] = tools::vertex_state::VISITED;
+                    idx = idx + 1;
+                    continue;
+                }
+            }
+        }
+        if (can_travel(idx%width_, idx/width_, direction::DOWN)) {
+            if (graph_.edge_label(vertices[idx], vertices[idx + width_]) == tools::edge_state::MINPATH) {
+                if (vtx_mark[vertices[idx + width_]] == tools::vertex_state::UNEXPLORED) {
+                    vect.push_back(direction::DOWN);  
+                    vtx_mark[vertices[idx]] = tools::vertex_state::VISITED;
+                    idx = idx + width_;
+                    continue;
+                }
+            }
+        }
+        if (can_travel(idx%width_, idx/width_, direction::LEFT)) {
+            if (graph_.edge_label(vertices[idx], vertices[idx - 1]) == tools::edge_state::MINPATH) {
+                if (vtx_mark[vertices[idx - 1]] == tools::vertex_state::UNEXPLORED) {
+                    vect.push_back(direction::LEFT);
+                    vtx_mark[vertices[idx]] = tools::vertex_state::VISITED;
+                    idx = idx - 1;
+                    continue;
+                }
+            }
+        }
+        if (can_travel(idx%width_, idx/width_, direction::UP)) {
+            if (graph_.edge_label(vertices[idx], vertices[idx - width_]) == tools::edge_state::MINPATH) {
+                    if (vtx_mark[vertices[idx - width_]] == tools::vertex_state::UNEXPLORED) {
+                    vect.push_back(direction::UP);
+                    vtx_mark[vertices[idx]] = tools::vertex_state::VISITED;
+                    idx = idx - width_;
+                    continue;
+                }
+            }
+        }
+    }
+    return vect;
+}
+
+epng::png maze::draw_with_solution()
+{
+    auto maze_png = draw();
+    std::vector<direction> vect = solve();
+    uint64_t x = 5;
+    uint64_t y = 5;
+    for (size_t i = 0; i < vect.size(); ++i)
+    {
+        //std::cout << x << " , " << y << std::endl;
+        
+        switch (vect[i])
+        {
+            case direction::UP :
+                for(uint64_t k=0; k<=10; k++)
+                    *maze_png( x, y - k ) = epng::rgba_pixel(255, 0, 0);
+                y = y - 10;
+                break;
+            case direction::RIGHT : 
+                for(uint64_t k=0; k<=10; k++)
+                    *maze_png( x + k, y ) = epng::rgba_pixel(255, 0, 0);
+                x = x + 10;
+                break;
+            case direction::DOWN :
+                for(uint64_t k=0; k<=10; k++)
+                    *maze_png( x, y + k ) = epng::rgba_pixel(255, 0, 0);
+                y = y + 10;
+                break;
+            case direction::LEFT :
+                for(uint64_t k=0; k<=10; k++)
+                    *maze_png( x - k, y ) = epng::rgba_pixel(255, 0, 0);
+                x = x - 10;
+                break;
+            default:
+                break;
+        }
+        /*
+        if (vect[i] == direction::UP) {
+            for(uint64_t k=0; k<=10; k++)
+                *maze_png( x, y - k ) = epng::rgba_pixel(255, 0, 0);
+            y = y - 10;
+        }
+        else if (vect[i] == direction::RIGHT) {
+            for(uint64_t k=0; k<=10; k++)
+                *maze_png( x + k, y ) = epng::rgba_pixel(255, 0, 0);
+            x = x + 10;
+        }
+        else if (vect[i] == direction::DOWN) {
+            for(uint64_t k=0; k<=10; k++)
+                *maze_png( x, y + k ) = epng::rgba_pixel(255, 0, 0);
+            y = y + 10;
+        }
+        else if (vect[i] == direction::LEFT) {
+            for(uint64_t k=0; k<=10; k++)
+                *maze_png( x - k, y ) = epng::rgba_pixel(255, 0, 0);
+            x = x - 10;
+        }
+        else
+            break;
+        */
+    }
+    //std::cout << "end loop" << std::endl;
+    for(uint64_t k=1; k<=9; k++)
+        *maze_png( (x-5)/10*10 + k, ((y-5)/10+1)*10) = epng::rgba_pixel(255, 255, 255);
+    //std::cout << (x-5)/10 << " , " << (y-5)/10 << std::endl;
+    return maze_png;
+}
+
+}

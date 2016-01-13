@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/su15-cs225/!svn/ver/5401/_shared/lab_huffman_provided
+END
+soln_test.bin
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/su15-cs225/!svn/ver/5401/_shared/lab_huffman_provided/soln_test.bin
+END
+soln_tree.huff
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/su15-cs225/!svn/ver/5401/_shared/lab_huffman_provided/soln_tree.huff
+END
+soln_test_2.bin
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/su15-cs225/!svn/ver/5401/_shared/lab_huffman_provided/soln_test_2.bin
+END
+soln_tree_2.huff
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/su15-cs225/!svn/ver/5401/_shared/lab_huffman_provided/soln_tree_2.huff
+END
+unit_tests.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/su15-cs225/!svn/ver/5401/_shared/lab_huffman_provided/unit_tests.cpp
+END
+config.ini
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/su15-cs225/!svn/ver/5401/_shared/lab_huffman_provided/config.ini
+END
+soln_test2.bin
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/su15-cs225/!svn/ver/5401/_shared/lab_huffman_provided/soln_test2.bin
+END
+soln_tree2.huff
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/su15-cs225/!svn/ver/5401/_shared/lab_huffman_provided/soln_tree2.huff
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/su15-cs225/!svn/ver/5401/_shared/lab_huffman_provided/Makefile
+END
+test.txt
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/su15-cs225/!svn/ver/5401/_shared/lab_huffman_provided/test.txt
+END

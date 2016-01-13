@@ -1,0 +1,30 @@
+/**
+ * @file main.cpp
+ * CS 225 lab_lab
+ */
+
+#include "epng.h"    // to use the PNG class
+
+void removeColor()
+{
+    // todo
+	using namespace epng;    
+
+	png image("in.png");
+
+	for(int i;i<image.height();i++){
+		for(int j;j<image.width();j++){
+			image(i,j)->green = 0;
+			
+			
+		}
+	}
+	
+	image.save("removed.png");
+}
+
+int main()
+{
+    removeColor();
+    return 0;
+}

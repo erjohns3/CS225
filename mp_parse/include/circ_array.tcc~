@@ -1,0 +1,199 @@
+/**
+ * @file circ_array.h
+ * @author Chase Geigle
+ * @date Summer 2014
+ */
+
+#include <stdexcept>
+#include "circ_array.h"
+
+namespace cs225
+{
+	template <class T>
+	circ_array<T>::circ_array()
+	:size_{0}, cap_{0}, front_{0}, back_{0},arr_{new T[cap_]}
+	{
+		/// @todo mp_parse.1
+	}
+
+	template <class T>
+	circ_array<T>::circ_array(uint64_t size)
+	:size_{size}, cap_{size}, front_{0}, back_{size-1},arr_{new T[cap_]}
+	{
+		/// @todo mp_parse.1
+	}
+
+	template <class T>
+	circ_array<T>::circ_array(const circ_array& other)
+	:size_{other.size_}, cap_{other.cap_}, front_{other.front_}, back_{other.back_},arr_{new T[cap_]}
+	{
+		/// @todo mp_parse.1
+		for(uint64_t i=0; i<size_; i++)
+			(*this)[i] = std::move(other[i]);
+	}
+
+	template <class T>
+	circ_array<T>::circ_array(circ_array&& other)
+	:size_{0}, cap_{0}, front_{0}, back_{0},arr_{new T[cap_]}
+	{
+		/// @todo mp_parse.1
+		swap(other);
+	}
+
+	template <class T>
+	circ_array<T>& circ_array<T>::operator=(circ_array rhs)
+	{
+		/// @todo mp_parse.1
+		swap(rhs);
+		return *this;
+	}
+
+	template <class T>
+	circ_array<T>::~circ_array() = default;
+
+	template <class T>
+	void circ_array<T>::swap(circ_array& other)
+	{
+		/// @todo mp_parse.1
+		arr_.swap(other.arr_);
+		std::swap(size_, other.size_);
+		std::swap(cap_, other.cap_);
+		std::swap(front_, other.front_);
+		std::swap(back_, other.back_);
+	}
+
+	template <class T>
+	const T& circ_array<T>::operator[](uint64_t idx) const
+	{
+		/// @todo mp_parse.1
+		return arr_[(front_ + idx)%cap_];
+	}
+
+	template <class T>
+	T& circ_array<T>::operator[](uint64_t idx)
+	{
+		/// @todo mp_parse.1
+		return arr_[(front_ + idx)%cap_];
+	}
+
+	template <class T>
+	const T& circ_array<T>::at(uint64_t idx) const
+	{
+		/// @todo mp_parse.1
+		if(idx < size_)
+			return arr_[(front_ + idx)%cap_];
+	}
+
+	template <class T>
+	T& circ_array<T>::at(uint64_t idx)
+	{
+		/// @todo mp_parse.1
+		if(idx < size_)
+			return arr_[(front_ + idx)%cap_];
+	}
+
+	template <class T>
+	void circ_array<T>::push_front(T elem)
+	{
+		/// @todo mp_parse.1
+		uint64_t modded;
+		if(front_ == 0)
+			modded = cap_-1;
+		else
+			modded = front_-1;
+		if(cap_ == 0){
+			cap_++;
+			std::unique_ptr<T[]> tmp {new T[cap_]};
+			tmp.swap(arr_);
+		}else if(modded == back_){
+			cap_*=2;
+			std::unique_ptr<T[]> tmp {new T[cap_]};
+			for(uint64_t i=0; i<size_; i++)
+				tmp[i+1] = std::move((*this)[i]);
+			tmp.swap(arr_);
+			front_= 1;
+			back_ = size_;
+		}
+		if(front_ == 0)
+			front_ = cap_-1;
+		else
+			front_--;
+		size_++;
+		arr_[front_] = elem;
+		
+	}
+
+	template <class T>
+	void circ_array<T>::push_back(T elem)
+	{
+		/// @todo mp_parse.1
+		if(cap_ == 0){
+			cap_++;
+			std::unique_ptr<T[]> tmp {new T[cap_]};
+			tmp.swap(arr_);
+		}else if((back_+1)%cap_ == front_){
+			cap_*=2;
+			std::unique_ptr<T[]> tmp {new T[cap_]};
+			for(uint64_t i=0; i<size_; i++)
+				tmp[i] = std::move((*this)[i]);
+			tmp.swap(arr_);
+			front_ = 0;
+			back_ = size_-1;
+		}
+		back_ = (back_+1)%cap_;
+		size_++;
+		arr_[back_] = elem;
+	}
+
+	template <class T>
+	void circ_array<T>::pop_front()
+	{
+		/// @todo mp_parse.1
+		if(size_ > 0){
+			arr_[front_] = NULL;
+			front_ = (front_+1)%cap_;
+			size_--;
+		}
+	}
+
+	template <class T>
+	void circ_array<T>::pop_back()
+	{
+		/// @todo mp_parse.1
+		if(size_ > 0){
+			arr_[back_] = NULL;
+			if(back_ == 0)
+				back_ = cap_-1;
+			else
+				back_--;
+			size_--;
+		}
+	}
+
+	template <class T>
+	void circ_array<T>::erase(uint64_t idx)
+	{
+		/// @todo mp_parse.1
+		for(uint64_t i=idx; i<size_-1; i++)
+			(*this)[i] = std::move((*this)[i+1]);
+		if(back_ == 0)
+			back_ = cap_-1;
+		else
+			back_--;
+		size_--;
+	}
+
+	template <class T>
+	uint64_t circ_array<T>::size() const
+	{
+		/// @todo mp_parse.1
+		return size_;
+	}
+
+	template <class T>
+	bool circ_array<T>::empty() const
+	{
+		/// @todo mp_parse.1
+		return size_ == 0;
+	}
+}
